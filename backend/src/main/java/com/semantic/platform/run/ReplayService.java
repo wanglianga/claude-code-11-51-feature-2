@@ -38,6 +38,15 @@ public class ReplayService {
         // 幂等：若已存在同 id 退款则直接触发影响计算
         RefundFact existing = refundRepo.findAll().stream()
                 .filter(r -> r.getRefundId().equals(refundId)).findFirst().orElse(null);
+        // 登记批次（迟到数据）：先落批次，退款记录指向该批次，便于按批次快照复算
+        SourceBatch batch = new SourceBatch();
+        batch.setSourceType("refunds");
+        batch.setStoreId(storeId);
+        batch.setStatus("loaded");
+        batch.setPeriodStart(businessDate);
+        batch.setPeriodEnd(businessDate);
+        batch.setRecordCount(1);
+        SourceBatch savedBatch = batchRepo.save(batch);
         if (existing == null) {
             RefundFact r = new RefundFact();
             r.setRefundId(refundId);
@@ -47,17 +56,9 @@ public class ReplayService {
             r.setBusinessDate(businessDate);
             r.setAmount(amount);
             r.setReason("迟到退款");
+            r.setCreatedBatch(savedBatch.getId());
             refundRepo.save(r);
         }
-        // 登记批次（迟到数据）
-        SourceBatch batch = new SourceBatch();
-        batch.setSourceType("refunds");
-        batch.setStoreId(storeId);
-        batch.setStatus("loaded");
-        batch.setPeriodStart(businessDate);
-        batch.setPeriodEnd(businessDate);
-        batch.setRecordCount(1);
-        SourceBatch savedBatch = batchRepo.save(batch);
         // 影响计算：生成新运行候选
         Map<String, Object> impact = impactService.onBatchImported(savedBatch);
         Map<String, Object> out = new LinkedHashMap<>();

@@ -1,6 +1,7 @@
 package com.semantic.platform.source;
 
 import jakarta.persistence.*;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 
@@ -29,6 +30,10 @@ public class SourceBatch {
     @Column(name = "period_end")
     private LocalDate periodEnd;
 
+    /** 批次覆盖小时数；NULL 表示整日覆盖，非 NULL 且小于应覆盖小时表示部分覆盖。 */
+    @Column(name = "covered_hours")
+    private BigDecimal coveredHours;
+
     @Column(name = "imported_at", nullable = false)
     private OffsetDateTime importedAt = OffsetDateTime.now();
 
@@ -46,6 +51,8 @@ public class SourceBatch {
     public void setPeriodStart(LocalDate periodStart) { this.periodStart = periodStart; }
     public LocalDate getPeriodEnd() { return periodEnd; }
     public void setPeriodEnd(LocalDate periodEnd) { this.periodEnd = periodEnd; }
+    public BigDecimal getCoveredHours() { return coveredHours; }
+    public void setCoveredHours(BigDecimal coveredHours) { this.coveredHours = coveredHours; }
     public OffsetDateTime getImportedAt() { return importedAt; }
     public void setImportedAt(OffsetDateTime importedAt) { this.importedAt = importedAt; }
 }

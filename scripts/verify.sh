@@ -96,6 +96,15 @@ for c in json.load(sys.stdin):
   [ "$HASNUMDEN" = "yes" ] && ok "比率单元格含分子分母（上卷重新汇总）" || bad "比率分子分母缺失"
 fi
 
+echo "=== 11. 移动节日同店窗口比较（独立复算） ==="
+if command -v python3 >/dev/null 2>&1 && python3 scripts/verify_holiday_windows.py >/tmp/holiday_verify.log 2>&1; then
+  HW=$(grep -o "通过 [0-9]* 项" /tmp/holiday_verify.log | tail -1)
+  ok "窗口比较验收通过（$HW）"
+else
+  bad "窗口比较验收失败，详见 /tmp/holiday_verify.log"
+  tail -20 /tmp/holiday_verify.log
+fi
+
 echo ""
 echo "=========================================="
 echo "验证结果: 通过 $PASS 项, 失败 $FAIL 项"

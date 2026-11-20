@@ -34,6 +34,10 @@
           <el-icon><Share /></el-icon>
           <span>影响分析</span>
         </el-menu-item>
+        <el-menu-item index="/holiday-windows">
+          <el-icon><Calendar /></el-icon>
+          <span>节日窗口比较</span>
+        </el-menu-item>
       </el-menu>
       <div class="user-info">
         <el-avatar :size="32" icon="UserFilled" />
@@ -66,7 +70,7 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { DataAnalysis, HomeFilled, Document, VideoPlay, Grid, Stamp, FolderOpened, Share, UserFilled } from '@element-plus/icons-vue'
+import { DataAnalysis, HomeFilled, Document, VideoPlay, Grid, Stamp, FolderOpened, Share, UserFilled, Calendar } from '@element-plus/icons-vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -82,7 +86,8 @@ const breadcrumbs = computed(() => {
     '/reports': '报表中心',
     '/approvals': '审批中心',
     '/sources': '数据源',
-    '/impact': '影响分析'
+    '/impact': '影响分析',
+    '/holiday-windows': '节日窗口比较'
   }
   const items = []
   if (route.path !== '/') {
